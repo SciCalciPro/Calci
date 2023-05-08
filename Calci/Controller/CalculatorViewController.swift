@@ -6,9 +6,85 @@
 //
 
 import UIKit
+import Combine
 
 class CalculatorViewController: UIViewController, InstantiateNib {
     var calculatorViewModel: CalculatorViewModel?
+    var items: [Any] = []
+    var newText: String = ""
+    
+    private let output = PassthroughSubject<Input, Never>()
+    private var cancellable = Set<AnyCancellable>()
+    
+    // MARK:- Result TextField
+    lazy var resultTextField: UITextField = {
+        let resultTextField = UITextField()
+        
+        resultTextField.font = .systemFont(ofSize: 40.0)
+        resultTextField.textColor = .white
+        resultTextField.textAlignment = .right
+        resultTextField.translatesAutoresizingMaskIntoConstraints = false
+        return resultTextField
+    }()
+
+    // MARK:- Result Label
+    lazy var labelResult: UILabel = {
+        let label = UILabel()
+        
+        label.textAlignment = .right
+        label.textColor = .darkGray
+        label.text = "40"
+        label.font = .systemFont(ofSize: 20)
+        label.translatesAutoresizingMaskIntoConstraints = false
+        return label
+    }()
+    
+    lazy var stackView: UIStackView = {
+        let stackView = UIStackView(arrangedSubviews: [historyBtn, conversionBtn, scientificOperationBtn])
+        
+        stackView.distribution = .fillEqually
+        stackView.alignment = .center
+        stackView.spacing = 20.0
+        stackView.translatesAutoresizingMaskIntoConstraints = false
+        return stackView
+    }()
+    
+    lazy var historyBtn: UIButton = {
+        let button = UIButton()
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var conversionBtn: UIButton = {
+        let button = UIButton()
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var scientificOperationBtn: UIButton = {
+        let button = UIButton()
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    lazy var backBtn: UIButton = {
+        let button = UIButton()
+        
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
+    }()
+    
+    // MARK:- Divider View
+    var dividerView: UIView = {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor().hexStringToUIColor(hex: "#1c1c1c")
+        view.translatesAutoresizingMaskIntoConstraints = false
+        return view
+    }()
     
     // MARK:- NumberPad View
     let numberPadWrapperView: UIView = {
@@ -43,7 +119,6 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         
         let operationCollectionViewModel = OperationCollectionViewModel()
         operationCollectionView.operationCollectionViewModel = operationCollectionViewModel
-        operationCollectionViewModel.operations = calculatorViewModel?.operations
         
         operationCollectionView.backgroundColor = .black
         operationCollectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -60,89 +135,20 @@ class CalculatorViewController: UIViewController, InstantiateNib {
 
         let numberCollectionViewViewModel = NumberCollectionViewModel()
         numberCollectionView.numberCollectionViewModel = numberCollectionViewViewModel
-        numberCollectionViewViewModel.numbers = calculatorViewModel?.numbers
-        
+        numberCollectionViewViewModel.operationButtonTapped.sink { [weak self] buttonSelection in
+            self?.output.send(.numberButtonStatus(button: buttonSelection))
+        }.store(in: &numberCollectionViewViewModel.cancellable)
         numberCollectionView.backgroundColor = .black
         numberCollectionView.translatesAutoresizingMaskIntoConstraints = false
         return numberCollectionView
     }()
-    
-    // MARK:- Divider View
-    var dividerView: UIView = {
-        let view = UIView()
-        
-        view.backgroundColor = UIColor().hexStringToUIColor(hex: "#1c1c1c")
-        view.translatesAutoresizingMaskIntoConstraints = false
-        return view
-    }()
-    
+
     // MARK:- Option Button
     lazy var optionView: UIView = {
         let view = UIView()
         
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
-    }()
-    
-    lazy var historyBtn: UIButton = {
-        let button = UIButton()
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    lazy var conversionBtn: UIButton = {
-        let button = UIButton()
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    lazy var scientificOperationBtn: UIButton = {
-        let button = UIButton()
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-    
-    lazy var backBtn: UIButton = {
-        let button = UIButton()
-        
-        button.translatesAutoresizingMaskIntoConstraints = false
-        return button
-    }()
-
-    lazy var stackView: UIStackView = {
-        let stackView = UIStackView(arrangedSubviews: [historyBtn, conversionBtn, scientificOperationBtn])
-        
-        stackView.distribution = .fillEqually
-        stackView.alignment = .center
-        stackView.spacing = 20.0
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        return stackView
-    }()
-    
-    // MARK:- Result Label
-    lazy var labelResult: UILabel = {
-        let label = UILabel()
-        
-        label.textAlignment = .right
-        label.textColor = .darkGray
-        label.text = "40"
-        label.font = .systemFont(ofSize: 20)
-        label.translatesAutoresizingMaskIntoConstraints = false
-        return label
-    }()
-    
-    // MARK:- Result TextField
-    lazy var resultTextField: UITextField = {
-        let resultTextField = UITextField()
-        
-        resultTextField.font = .systemFont(ofSize: 40.0)
-        resultTextField.textColor = .white
-        resultTextField.textAlignment = .right
-        resultTextField.translatesAutoresizingMaskIntoConstraints = false
-        return resultTextField
     }()
     
     override func viewDidLoad() {
@@ -155,6 +161,9 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         applyConstraints()
         
         addNibsToView()
+        observe()
+        
+        output.send(.viewDidLoad)
     }
     
     func addToSubview() {
@@ -269,5 +278,17 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         ])
     }
     
-    
+}
+
+extension CalculatorViewController {
+    func observe() {
+        calculatorViewModel?.transform(input: output.eraseToAnyPublisher()).sink(receiveValue: { [weak self] result in
+            switch result {
+            case .setOperators(operations: let operationButton):
+                self?.operationCollectionView.operationCollectionViewModel?.operations = operationButton
+            case .setNumber(numbers: let numberButton):
+                self?.numberCollectionView.numberCollectionViewModel?.numbers = numberButton
+            }
+        }).store(in: &cancellable)
+    }
 }

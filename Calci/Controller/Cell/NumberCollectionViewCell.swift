@@ -9,7 +9,6 @@ import UIKit
 
 class NumberCollectionViewCell: UICollectionViewCell {
     
-//    var operationCollectionViewModel: OperationCollectionViewModel?
     var operation: CalcButton?
     
     lazy var titleLabel: UILabel = {
@@ -21,9 +20,12 @@ class NumberCollectionViewCell: UICollectionViewCell {
         return label
     }()
     
-    override class func awakeFromNib() {
-        super.awakeFromNib()
-    }
+    lazy var titleButton: UIButton = {
+        let button = UIButton()
+        
+        button.setTitle("", for: .normal)
+        return button
+    }()
     
     func configure(operation: CalcButton) {
         self.operation = operation
