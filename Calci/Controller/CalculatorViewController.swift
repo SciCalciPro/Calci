@@ -23,6 +23,8 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         resultTextField.font = .systemFont(ofSize: 40.0)
         resultTextField.textColor = .white
         resultTextField.textAlignment = .right
+        resultTextField.becomeFirstResponder()
+        resultTextField.inputView = UIView()        
         resultTextField.translatesAutoresizingMaskIntoConstraints = false
         return resultTextField
     }()
@@ -33,7 +35,6 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         
         label.textAlignment = .right
         label.textColor = .darkGray
-        label.text = "40"
         label.font = .systemFont(ofSize: 20)
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
@@ -157,6 +158,7 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         // Do any additional setup after loading the view.
         view.backgroundColor = .black
         
+        register()
         addToSubview()
         applyConstraints()
         
@@ -164,6 +166,9 @@ class CalculatorViewController: UIViewController, InstantiateNib {
         observe()
         
         output.send(.viewDidLoad)
+    }
+    
+    func register() {
     }
     
     func addToSubview() {
@@ -282,13 +287,35 @@ class CalculatorViewController: UIViewController, InstantiateNib {
 
 extension CalculatorViewController {
     func observe() {
-        calculatorViewModel?.transform(input: output.eraseToAnyPublisher()).sink(receiveValue: { [weak self] result in
+        calculatorViewModel?.transform(input: output.eraseToAnyPublisher()).sink(receiveValue: { [unowned self] result in
             switch result {
             case .setOperators(operations: let operationButton):
-                self?.operationCollectionView.operationCollectionViewModel?.operations = operationButton
+                self.operationCollectionView.operationCollectionViewModel?.operations = operationButton
             case .setNumber(numbers: let numberButton):
-                self?.numberCollectionView.numberCollectionViewModel?.numbers = numberButton
+                self.numberCollectionView.numberCollectionViewModel?.numbers = numberButton
+            case .updateText(value: let value):
+                if value == "C" {
+                    self.resultTextField.text = ""
+                } else {
+                    self.resultTextField.text?.append(value)
+                }
+                
+                self.textFieldDidEndEditing(self.resultTextField)
+            case .updateResult(value: let result):
+                labelResult.text = result
             }
         }).store(in: &cancellable)
+    }
+}
+
+extension CalculatorViewController {
+    func textFieldDidEndEditing(_ textField: UITextField) {
+        if let text = textField.text {
+            calculatorViewModel?.textFieldValue.send(text)
+        }
+        if let selectedRange = textField.selectedTextRange {
+            let cursorPosition = textField.offset(from: textField.beginningOfDocument, to: selectedRange.start)
+            calculatorViewModel?.textFieldCursorPosition.send(cursorPosition)
+        }
     }
 }

@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import UIKit
 import Combine
 
 protocol CalculatorViewModelDelegate {
@@ -23,6 +24,8 @@ enum Input {
 enum Output {
     case setNumber(numbers: [CalcButton])
     case setOperators(operations: [CalcButton])
+    case updateText(value: String)
+    case updateResult(value: String)
 }
 
 class CalculatorViewModel {
@@ -30,12 +33,26 @@ class CalculatorViewModel {
     private let output = PassthroughSubject<Output, Never>()
     private var cancellable = Set<AnyCancellable>()
     
-//    @Published private var operations:[CalcButton] = []
-//    @Published private var numbers:[CalcButton] = []
+    var textFieldValue = CurrentValueSubject<String, Never>("")
+    var textFieldCursorPosition = PassthroughSubject<Int, Never>()
     var operations: Operation?
+    
+    private var completeTextFieldValue: String = ""
+    private var cursorPosition: Int = 0
+    private var isPlusMinusOperator: Bool = false
     
     init(operations: Operation) {
         self.operations = operations
+        
+        textFieldCursorPosition.sink { value in
+            print("value of current cursor position => \(value)")
+            self.cursorPosition = value
+        }.store(in: &cancellable)
+        
+        textFieldValue.sink(receiveValue: { [unowned self] textFieldValue in
+            completeTextFieldValue = textFieldValue
+        }).store(in: &cancellable)
+
     }
     
     func transform(input: AnyPublisher<Input, Never>) -> AnyPublisher<Output, Never> {
@@ -58,11 +75,10 @@ class CalculatorViewModel {
                 self?.output.send(.setOperators(operations: operations))
             case .numberButtonStatus(button: let numberButton):
                 self?.didNumberButtonTapped(buttonSelection: numberButton)
-                break
             case .operationButtonStatus(button: _):
                 break
-            case .update(result: _):
-                break
+            case .update(result: let value):
+                print(value)
             }
         }.store(in: &cancellable)
         
@@ -71,19 +87,25 @@ class CalculatorViewModel {
     }
     
     func didNumberButtonTapped(buttonSelection: ButtonSelection) {
+        var value: String = ""
+        
         switch buttonSelection {
         case .clearSelected:
-            print("C")
+            value = "C"
         case .parenthesisSelected:
-            self.operations?.parenthesis()
+            if let parenthesis = self.operations?.parenthesis(cursorPosition: cursorPosition, completeTextFieldValue: completeTextFieldValue) {
+                value = parenthesis
+            }
         case .percentageSelected:
-            print("%")
+            value="%"
         case .numberSelected(let selectedNumber):
-            print("\(selectedNumber)")
+            value="\(String(selectedNumber))"
         case .decimalSelected:
-            print(".")
+            value="."
         case .plusMinusSelected:
-            print("(+-)")
+            break
         }
+        
+        self.output.send(.updateText(value: value))
     }
 }
