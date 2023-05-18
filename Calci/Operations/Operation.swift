@@ -40,17 +40,21 @@ class Operation {
         return result
     }
     
-    private func updateDisplay(cursorPosition: Int, textValue: String, value: String, isPlusMinus:  Bool = false) -> String {
+    private func updateDisplay(cursorPosition: Int, textValue: String, value: String) -> String {
         let leftValue = textValue.prefix(cursorPosition)
         let rightValue = textValue.suffix(textValue.count - cursorPosition)
 
         let newValue = leftValue + value + rightValue
-        if isPlusMinus {
-            return "(-"
-        } else {
-            let character = String(newValue).extractCharacter(character: Character(value))
-            return character?.description ?? ""
-        }
+        let character = String(newValue).extractCharacter(character: Character(value))
+        return character?.description ?? ""
     }
    
+    func plusMinus(textValue: String) -> String {
+        
+        if textValue != "" && textValue.subStirng(from: 0, to: 2).contains("(-") {
+            return ""
+        } else {
+            return "(-\(textValue)"
+        }
+    }
 }

@@ -296,13 +296,19 @@ extension CalculatorViewController {
             case .updateText(value: let value):
                 if value == "C" {
                     self.resultTextField.text = ""
+                }
+                if value == "" || value.contains("(-") {
+                    if value == "" {
+                        let actualValue = resultTextField.text?.subStirng(from: 2, to: resultTextField.text?.count ?? 0)
+                        self.resultTextField.text = actualValue
+                    } else {
+                        self.resultTextField.text = value
+                    }
                 } else {
                     self.resultTextField.text?.append(value)
                 }
                 
                 self.textFieldDidEndEditing(self.resultTextField)
-            case .updateResult(value: let result):
-                labelResult.text = result
             }
         }).store(in: &cancellable)
     }

@@ -25,7 +25,6 @@ enum Output {
     case setNumber(numbers: [CalcButton])
     case setOperators(operations: [CalcButton])
     case updateText(value: String)
-    case updateResult(value: String)
 }
 
 class CalculatorViewModel {
@@ -39,7 +38,6 @@ class CalculatorViewModel {
     
     private var completeTextFieldValue: String = ""
     private var cursorPosition: Int = 0
-    private var isPlusMinusOperator: Bool = false
     
     init(operations: Operation) {
         self.operations = operations
@@ -103,7 +101,9 @@ class CalculatorViewModel {
         case .decimalSelected:
             value="."
         case .plusMinusSelected:
-            break
+            if let plusMinusOperator = self.operations?.plusMinus(textValue: completeTextFieldValue) {
+                value = plusMinusOperator
+            }
         }
         
         self.output.send(.updateText(value: value))
