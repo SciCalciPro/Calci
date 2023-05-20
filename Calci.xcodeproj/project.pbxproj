@@ -29,6 +29,10 @@
 		86B9A40B29DCC64D003EECF5 /* CalculatorViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B9A40A29DCC64D003EECF5 /* CalculatorViewModel.swift */; };
 		86B9A40E29DCC679003EECF5 /* CalculatorViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B9A40D29DCC679003EECF5 /* CalculatorViewController.swift */; };
 		86B9A41029DCC6E4003EECF5 /* RootCoordinator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86B9A40F29DCC6E4003EECF5 /* RootCoordinator.swift */; };
+		86CA4ACA2A12916700002D22 /* NumberFormatter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CA4AC92A12916700002D22 /* NumberFormatter.swift */; };
+		86CA4ACC2A12928800002D22 /* UIViewController+String.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86CA4ACB2A12928800002D22 /* UIViewController+String.swift */; };
+		86D394B92A0F8AC8008BE4AB /* UITextField+Publisher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86D394B82A0F8AC8008BE4AB /* UITextField+Publisher.swift */; };
+		86F0721D2A0953AD00232B18 /* Operation.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F0721C2A0953AD00232B18 /* Operation.swift */; };
 		86F6065E29DDAA1200FD8E04 /* UIViewController+Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F6065D29DDAA1200FD8E04 /* UIViewController+Extension.swift */; };
 		86F6066029DDAD6600FD8E04 /* UIViewController+Button.swift in Sources */ = {isa = PBXBuildFile; fileRef = 86F6065F29DDAD6600FD8E04 /* UIViewController+Button.swift */; };
 /* End PBXBuildFile section */
@@ -77,6 +81,10 @@
 		86B9A40A29DCC64D003EECF5 /* CalculatorViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewModel.swift; sourceTree = "<group>"; };
 		86B9A40D29DCC679003EECF5 /* CalculatorViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalculatorViewController.swift; sourceTree = "<group>"; };
 		86B9A40F29DCC6E4003EECF5 /* RootCoordinator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootCoordinator.swift; sourceTree = "<group>"; };
+		86CA4AC92A12916700002D22 /* NumberFormatter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NumberFormatter.swift; sourceTree = "<group>"; };
+		86CA4ACB2A12928800002D22 /* UIViewController+String.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+String.swift"; sourceTree = "<group>"; };
+		86D394B82A0F8AC8008BE4AB /* UITextField+Publisher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITextField+Publisher.swift"; sourceTree = "<group>"; };
+		86F0721C2A0953AD00232B18 /* Operation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Operation.swift; sourceTree = "<group>"; };
 		86F6065D29DDAA1200FD8E04 /* UIViewController+Extension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Extension.swift"; sourceTree = "<group>"; };
 		86F6065F29DDAD6600FD8E04 /* UIViewController+Button.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Button.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -169,6 +177,8 @@
 				86B9A40829DCC5ED003EECF5 /* Controller */,
 				86B9A40429DCC5BA003EECF5 /* Coordinator */,
 				86F6065C29DDA9AE00FD8E04 /* Extension */,
+				86F0721B2A09539400232B18 /* Operations */,
+				86D394B72A0F868B008BE4AB /* Helper */,
 				86B9A40729DCC5E2003EECF5 /* Resources */,
 				86B9A3D129DCBB6B003EECF5 /* AppDelegate.swift */,
 				86B9A3D329DCBB6B003EECF5 /* SceneDelegate.swift */,
@@ -234,12 +244,30 @@
 			path = ViewModel;
 			sourceTree = "<group>";
 		};
+		86D394B72A0F868B008BE4AB /* Helper */ = {
+			isa = PBXGroup;
+			children = (
+				86D394B82A0F8AC8008BE4AB /* UITextField+Publisher.swift */,
+			);
+			path = Helper;
+			sourceTree = "<group>";
+		};
+		86F0721B2A09539400232B18 /* Operations */ = {
+			isa = PBXGroup;
+			children = (
+				86F0721C2A0953AD00232B18 /* Operation.swift */,
+				86CA4AC92A12916700002D22 /* NumberFormatter.swift */,
+			);
+			path = Operations;
+			sourceTree = "<group>";
+		};
 		86F6065C29DDA9AE00FD8E04 /* Extension */ = {
 			isa = PBXGroup;
 			children = (
 				86F6065D29DDAA1200FD8E04 /* UIViewController+Extension.swift */,
 				86F6065F29DDAD6600FD8E04 /* UIViewController+Button.swift */,
 				8684F8D329E090DA0074705F /* UIViewController+Color.swift */,
+				86CA4ACB2A12928800002D22 /* UIViewController+String.swift */,
 			);
 			path = Extension;
 			sourceTree = "<group>";
@@ -377,7 +405,9 @@
 				8684F8DA29E0BBCF0074705F /* NumberCollectionViewModel.swift in Sources */,
 				869806F629E1752B009504C2 /* UIDevice.swift in Sources */,
 				86F6065E29DDAA1200FD8E04 /* UIViewController+Extension.swift in Sources */,
+				86F0721D2A0953AD00232B18 /* Operation.swift in Sources */,
 				86B9A41029DCC6E4003EECF5 /* RootCoordinator.swift in Sources */,
+				86CA4ACC2A12928800002D22 /* UIViewController+String.swift in Sources */,
 				86B9A40629DCC5D1003EECF5 /* CalculatorCoordinator.swift in Sources */,
 				86003BD729DF1B5C002B222A /* OperationCollectionView.swift in Sources */,
 				86003BD029DEFDED002B222A /* NumberCollectionViewCell.swift in Sources */,
@@ -390,7 +420,9 @@
 				86003BDA29DF53D0002B222A /* OperationCollectionViewModel.swift in Sources */,
 				86B9A40B29DCC64D003EECF5 /* CalculatorViewModel.swift in Sources */,
 				86003BD529DF0422002B222A /* LoadNib.swift in Sources */,
+				86CA4ACA2A12916700002D22 /* NumberFormatter.swift in Sources */,
 				86B9A40E29DCC679003EECF5 /* CalculatorViewController.swift in Sources */,
+				86D394B92A0F8AC8008BE4AB /* UITextField+Publisher.swift in Sources */,
 				8684F8D229E08DF70074705F /* CalcButtons.swift in Sources */,
 				86B9A3D429DCBB6B003EECF5 /* SceneDelegate.swift in Sources */,
 			);

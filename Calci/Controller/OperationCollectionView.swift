@@ -53,12 +53,6 @@ extension OperationCollectionView: UICollectionViewDelegate, UICollectionViewDat
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
         
-//        let leftRightPadding = collectionView.frame.width * 0.13
-//        let interSpacing = collectionView.frame.width * 0.01
-//
-//        let cellWidth = (collectionView.frame.width - (2 * leftRightPadding) - (2 * interSpacing))
-//        return .init(width: cellWidth, height: cellWidth)
-        
         switch UIDevice().screenType {
         case .iPhones_6_6s_7_8, .iPhones_6Plus_6sPlus_7Plus_8Plus, .iPhones_6Plus_6sPlus_7Plus_8Plus_Simulators:
             let leftRightPadding = collectionView.frame.width * 0.2

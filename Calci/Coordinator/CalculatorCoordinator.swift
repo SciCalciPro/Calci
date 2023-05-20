@@ -18,7 +18,8 @@ class CalculatorCoordinator: Coordinator {
     
     func start() {
         let calculatorViewController = CalculatorViewController()
-        let calculatorViewModel = CalculatorViewModel()
+        let operations = Operation()
+        let calculatorViewModel = CalculatorViewModel(operations: operations)
         calculatorViewController.calculatorViewModel = calculatorViewModel
         navigationController?.setViewControllers([calculatorViewController], animated: true)
     }

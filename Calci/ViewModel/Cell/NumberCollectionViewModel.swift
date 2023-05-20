@@ -6,9 +6,12 @@
 //
 
 import Foundation
+import Combine
 
 class NumberCollectionViewModel {
-    var viewDidLoad:() = ()
+    
+    var numberButtonTapped = PassthroughSubject<CalcButton, Never>()
+    var cancellable = Set<AnyCancellable>()
     
     var numbers:[CalcButton]?
     
@@ -16,7 +19,21 @@ class NumberCollectionViewModel {
         
     }
     
-    func didSelectItemAt() {
-        
+    func didSelectItemAt(number: String) {
+        switch number {
+        case "C":
+            numberButtonTapped.send(.clear)
+        case "( )":
+            numberButtonTapped.send(.parenthesis)
+        case "%":
+            numberButtonTapped.send(.percentage)
+        case "+/-":
+            numberButtonTapped.send(.plusminus)
+        case ".":
+            numberButtonTapped.send(.decimal)
+        default:
+            guard let intTypeCast = Int(number) else { return }
+            numberButtonTapped.send(.number(intTypeCast))
+        }
     }
 }
