@@ -8,21 +8,9 @@
 import Foundation
 import Combine
 
-enum ButtonSelection {
-    case clearSelected
-    case parenthesisSelected
-    case percentageSelected
-    case numberSelected(selectedNumber: Int)
-    case decimalSelected
-    case plusMinusSelected
-}
-
 class NumberCollectionViewModel {
     
-    var operationButtonTapped = PassthroughSubject<ButtonSelection, Never>()
-    var operationButtonPublisher: AnyPublisher<ButtonSelection, Never> {
-        operationButtonTapped.eraseToAnyPublisher()
-    }
+    var numberButtonTapped = PassthroughSubject<CalcButton, Never>()
     var cancellable = Set<AnyCancellable>()
     
     var numbers:[CalcButton]?
@@ -34,18 +22,18 @@ class NumberCollectionViewModel {
     func didSelectItemAt(number: String) {
         switch number {
         case "C":
-            operationButtonTapped.send(.clearSelected)
+            numberButtonTapped.send(.clear)
         case "( )":
-            operationButtonTapped.send(.parenthesisSelected)
+            numberButtonTapped.send(.parenthesis)
         case "%":
-            operationButtonTapped.send(.percentageSelected)
+            numberButtonTapped.send(.percentage)
         case "+/-":
-            operationButtonTapped.send(.plusMinusSelected)
+            numberButtonTapped.send(.plusminus)
         case ".":
-            operationButtonTapped.send(.decimalSelected)
+            numberButtonTapped.send(.decimal)
         default:
             guard let intTypeCast = Int(number) else { return }
-            operationButtonTapped.send(.numberSelected(selectedNumber: intTypeCast))
+            numberButtonTapped.send(.number(intTypeCast))
         }
     }
 }

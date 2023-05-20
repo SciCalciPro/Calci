@@ -16,7 +16,7 @@ protocol CalculatorViewModelDelegate {
 
 enum Input {
     case viewDidLoad
-    case numberButtonStatus(button: ButtonSelection)
+    case numberButtonStatus(button: CalcButton)
     case operationButtonStatus(button: CalcButton)
     case update(result: Int)
 }
@@ -72,7 +72,7 @@ class CalculatorViewModel {
                 self?.output.send(.setNumber(numbers: numbers))
                 self?.output.send(.setOperators(operations: operations))
             case .numberButtonStatus(button: let numberButton):
-                self?.didNumberButtonTapped(buttonSelection: numberButton)
+                self?.didNumberButtonTapped(calcButton: numberButton)
             case .operationButtonStatus(button: _):
                 break
             case .update(result: let value):
@@ -84,26 +84,36 @@ class CalculatorViewModel {
         return output.eraseToAnyPublisher()
     }
     
-    func didNumberButtonTapped(buttonSelection: ButtonSelection) {
+    func didNumberButtonTapped(calcButton: CalcButton) {
         var value: String = ""
         
-        switch buttonSelection {
-        case .clearSelected:
+        switch calcButton {
+        case .clear:
             value = "C"
-        case .parenthesisSelected:
+        case .parenthesis:
             if let parenthesis = self.operations?.parenthesis(cursorPosition: cursorPosition, completeTextFieldValue: completeTextFieldValue) {
                 value = parenthesis
             }
-        case .percentageSelected:
+        case .percentage:
             value="%"
-        case .numberSelected(let selectedNumber):
+        case .number(let selectedNumber):
             value="\(String(selectedNumber))"
-        case .decimalSelected:
+        case .decimal:
             value="."
-        case .plusMinusSelected:
+        case .plusminus:
             if let plusMinusOperator = self.operations?.plusMinus(textValue: completeTextFieldValue) {
                 value = plusMinusOperator
             }
+        case .divide:
+            break
+        case .multiply:
+            break
+        case .substract:
+            break
+        case .addition:
+            break
+        case .equals:
+            break
         }
         
         self.output.send(.updateText(value: value))

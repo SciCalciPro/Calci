@@ -50,7 +50,6 @@ class Operation {
     }
    
     func plusMinus(textValue: String) -> String {
-        
         if textValue != "" && textValue.subStirng(from: 0, to: 2).contains("(-") {
             return ""
         } else {
