@@ -288,7 +288,7 @@ class CalculatorViewController: UIViewController, InstantiateNib {
 }
 
 extension CalculatorViewController {
-    func observe() {
+    private func observe() {
         calculatorViewModel?.transform(input: output.eraseToAnyPublisher()).sink(receiveValue: { [unowned self] result in
             switch result {
             case .setOperators(operations: let operationButton):

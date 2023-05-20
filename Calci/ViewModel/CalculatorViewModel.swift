@@ -84,7 +84,7 @@ class CalculatorViewModel {
         return output.eraseToAnyPublisher()
     }
     
-    func didNumberButtonTapped(calcButton: CalcButton) {
+    fileprivate func didNumberButtonTapped(calcButton: CalcButton) {
         var value: String = ""
         
         switch calcButton {
